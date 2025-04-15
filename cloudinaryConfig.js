@@ -1,9 +1,9 @@
-import {cloudinary as v2} from "cloudinary";
-import CloudinaryStorage from "multer-storage-cloudinary";
-const path = require("path");
+import {v2} from 'cloudinary';
 
-cloudinary.config({
+v2.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+export default v2;

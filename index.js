@@ -2,6 +2,9 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import express from "express";
 import UserRouter from "./router/UserRoute.js";
+import Transactionrouter from "./router/TransactionRoute.js";
+import investmentRouter from "./router/InvestmentRoute.js";
+import InvesmentPackagerouter from "./router/InvestmentRoutePackage.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,7 +13,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/user", UserRouter);
-console.log(process.env.MONGODB_URL,"url");
+app.use("/transaction",Transactionrouter);
+app.use("/investment",investmentRouter);
+app.use("/package",InvesmentPackagerouter);
 
 mongoose
   .connect(process.env.MONGODB_URL)
