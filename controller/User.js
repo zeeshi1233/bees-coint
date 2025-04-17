@@ -268,12 +268,12 @@ export const Login = async (req, res) => {
     }
 
     // Check if user is verified before login
-    if (!user.isVerified) {
-      return res.status(400).json({
-        success: false,
-        error: "Please verify your email before logging in",
-      });
-    }
+    // if (!user.isVerified) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     error: "Please verify your email before logging in",
+    //   });
+    // }
 
     // Compare the hashed password with the entered password
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
