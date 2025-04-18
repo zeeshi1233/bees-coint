@@ -250,59 +250,59 @@ export const ValidateOtp = async (req, res) => {
 
 export const Login = async (req, res) => {
   const { email, password } = req.body;
+  return res.status(500).json({ success: false, data: email});
+  // if (!email || !password) {
+  //   return res.status(400).json({
+  //     success: false,
+  //     error: "Email and password are required",
+  //   });
+  // }
 
-  if (!email || !password) {
-    return res.status(400).json({
-      success: false,
-      error: "Email and password are required",
-    });
-  }
+  // try {
+  //   const user = await User.findOne({ email });
+  //   if (!user) {
+  //     return res.status(400).json({
+  //       success: false,
+  //       error: "Invalid email or password",
+  //     });
+  //   }
 
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid email or password",
-      });
-    }
+  //   // Check if user is verified before login
+  //   // if (!user.isVerified) {
+  //   //   return res.status(400).json({
+  //   //     success: false,
+  //   //     error: "Please verify your email before logging in",
+  //   //   });
+  //   // }
 
-    // Check if user is verified before login
-    // if (!user.isVerified) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     error: "Please verify your email before logging in",
-    //   });
-    // }
+  //   // Compare the hashed password with the entered password
+  //   const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  //   if (!isPasswordCorrect) {
+  //     return res.status(400).json({
+  //       success: false,
+  //       error: "Invalid email or password",
+  //     });
+  //   }
 
-    // Compare the hashed password with the entered password
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid email or password",
-      });
-    }
+  //   // Create JWT token
+  //   const token = jwt.sign(
+  //     { userId: user._id, email: user.email },
+  //     process.env.JWT_SECRET_KEY // Secret key for JWT token
+  //   );
 
-    // Create JWT token
-    const token = jwt.sign(
-      { userId: user._id, email: user.email },
-      process.env.JWT_SECRET_KEY // Secret key for JWT token
-    );
+  //   // Exclude password from user data
+  //   const { password: userPassword, ...userWithoutPassword } = user.toObject();
 
-    // Exclude password from user data
-    const { password: userPassword, ...userWithoutPassword } = user.toObject();
-
-    res.status(200).json({
-      success: true,
-      message: "Login successful",
-      token,
-      user: userWithoutPassword,
-    });
-  } catch (error) {
-    console.error("Error during login:", error);
-    res.status(500).json({ success: false, error: "Internal server error" });
-  }
+  //   res.status(200).json({
+  //     success: true,
+  //     message: "Login successful",
+  //     token,
+  //     user: userWithoutPassword,
+  //   });
+  // } catch (error) {
+  //   console.error("Error during login:", error);
+  //   res.status(500).json({ success: false, error: "Internal server error" });
+  // }
 };
 
 export const forgotPassword = async (req, res) => {
