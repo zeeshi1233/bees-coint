@@ -4,7 +4,7 @@ import User from '../model/UserSchema.js';
 import { initiatePixDeposit, initiatePixWithdrawal } from '../utils/syncpayService.js';
 
 export const createTransaction = async (req, res) => {
-  const { user, amount, type, method } = req.body;
+  const { user, amount, type, method,pixType,pixKey } = req.body;
 
   try {    
     const userData = await User.findById(user);
@@ -15,17 +15,18 @@ export const createTransaction = async (req, res) => {
       amount,
       transactionType: type,
       method,
-      status: 'pending', // same for both deposit and withdraw
+      pixType,
+      pixKey,
+      status: 'pending',
     });
 
-    await transaction.save();
 
     let syncpayResponse = null;
 
     // Deposit via PIX: Call SyncPay immediately
     if (type === 'deposit' && method === 'PIX') {
       syncpayResponse = await initiatePixDeposit({ amount, userData });
-
+      await transaction.save();
       return res.status(201).json({
         message: 'Deposit transaction created successfully',
         transaction,
@@ -35,6 +36,7 @@ export const createTransaction = async (req, res) => {
 
     // Withdraw via PIX: Just save, wait for admin approval
     if (type === 'withdraw' && method === 'PIX') {
+      await transaction.save();
       return res.status(201).json({
         message: 'Withdrawal request submitted. Awaiting admin approval.',
         transaction,

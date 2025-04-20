@@ -1,27 +1,49 @@
 import { Investment } from '../model/InvestmentSchema.js';
 import User from '../model/UserSchema.js';
+import { initiatePixDeposit } from '../utils/syncpayService.js';
 
 // Create a new investment
 const createInvestment = async (req, res) => {
-  const { amount, packageId, userId } = req.body;
-
+  const { amount, packageId, userId, type, method } = req.body;
   try {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Check if user has already invested in this package
+    const existingInvestment = await Investment.findOne({
+      user: userId,
+      packageId: packageId,
+    });
+
+    if (existingInvestment) {
+      return res.status(400).json({ message: 'User has already invested in this package' });
+    }
 
     const investment = new Investment({
       user: userId,
       amount,
       packageId,
       status: 'active',
-      dailyReturn: amount * 0.01,  // Example: 1% daily return
+      dailyReturn: amount * 0.01,
     });
 
     await investment.save();
     user.investments.push(investment._id);
     await user.save();
 
-    res.status(201).json(investment);
+    let syncpayResponse = null;
+
+    if (type === 'deposit' && method === 'PIX') {
+      syncpayResponse = await initiatePixDeposit({ amount, userData: user });
+      return res.status(201).json({
+        message: 'Deposit investment created successfully',
+        investment,
+        pixInfo: syncpayResponse || null,
+      });
+    }
+
+    res.status(201).json({ message: 'Investment created successfully', investment });
+
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
