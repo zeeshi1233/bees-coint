@@ -6,6 +6,7 @@ import Transactionrouter from "./router/TransactionRoute.js";
 import investmentRouter from "./router/InvestmentRoute.js";
 import InvesmentPackagerouter from "./router/InvestmentRoutePackage.js";
 import cors from "cors"; // ⬅️ Add this line
+import CommunityRouter from "./router/CommunityRoute.js";
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(cors()); // ⬅️ Allow all origins
@@ -16,6 +17,7 @@ app.use("/user", UserRouter);
 app.use("/transaction",Transactionrouter);
 app.use("/investment",investmentRouter);
 app.use("/package",InvesmentPackagerouter);
+app.use("/community",CommunityRouter);
 
 mongoose
   .connect(process.env.MONGODB_URL)
