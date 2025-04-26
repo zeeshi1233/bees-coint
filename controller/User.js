@@ -14,6 +14,8 @@ const userValidationSchema = Joi.object({
     .pattern(/^[0-9]{11}$/)
     .required(),
   email: Joi.string().email().required(),
+  zipCode: Joi.string().required(),
+  dob: Joi.string().required(),
   phoneNumber: Joi.string()
     .required()
     .pattern(/^\+?(\d{1,3})?(\d{10})$/),
@@ -36,7 +38,7 @@ export const Register = async (req, res) => {
         .json({ success: false, message: error.details[0].message });
     }
 
-    const { firstName, lastName, email, phoneNumber, password} = req.body;
+    const { firstName, lastName, email, phoneNumber, password, dob, zipCode } = req.body;
 
     const referralCode = req.query.referralCode || null;
 
@@ -85,6 +87,8 @@ export const Register = async (req, res) => {
       email,
       phoneNumber,
       password: hashedPassword,
+      zipCode,
+      dob
     });
 
     let referrer = null;
@@ -95,9 +99,9 @@ export const Register = async (req, res) => {
       }
     }
 
-    const newReferralCode =referralCode; 
-    newUser.referralCode = newReferralCode; 
-    newUser.referredBy = referrer ? referrer._id : null; 
+    const newReferralCode = referralCode;
+    newUser.referralCode = newReferralCode;
+    newUser.referredBy = referrer ? referrer._id : null;
     await newUser.save();
 
     if (referrer) {
@@ -120,6 +124,8 @@ export const Register = async (req, res) => {
         cpf: newUser.cpf,
         phoneNumber: newUser.phoneNumber,
         referralCode: newUser.referralCode,
+        zipCode,
+        dob
       },
     });
   } catch (error) {

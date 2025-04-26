@@ -31,6 +31,14 @@ const userSchema = new mongoose.Schema(
       required: true,
       match: /^\+?(\d{1,3})?(\d{10})$/, // Simple regex to match a valid phone number
     },    
+    zipCode: {
+      type: String,
+      required: true,
+    },    
+    dob: {
+      type: String,
+      required: true,
+    },    
     password: {
       type: String,
       required: true,
