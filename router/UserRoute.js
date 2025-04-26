@@ -5,7 +5,7 @@ import { protect } from "../Middleware/ProtectedRoutes.js";
 
 const UserRouter = express.Router();
 
-UserRouter.post("/register",upload, Register);  
+UserRouter.post("/register", Register);  
 UserRouter.post("/send-otp",SendOtp);  
 UserRouter.post("/verify-otp",ValidateOtp);  
 UserRouter.post("/login", Login);

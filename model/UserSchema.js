@@ -30,10 +30,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       match: /^\+?(\d{1,3})?(\d{10})$/, // Simple regex to match a valid phone number
-    },
-    image: {
-      type: String, // Cloudinary URL for image
-    },
+    },    
     password: {
       type: String,
       required: true,

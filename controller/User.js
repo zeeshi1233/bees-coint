@@ -40,41 +40,41 @@ export const Register = async (req, res) => {
 
     const referralCode = req.query.referralCode || null;
 
-    console.log("Generated CPF:", cpf);
+    // console.log("Generated CPF:", cpf);
 
-    const images = req.files;
+    // const images = req.files;
 
-    if (!images || images.length === 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "No image file uploaded." });
-    }
+    // if (!images || images.length === 0) {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: "No image file uploaded." });
+    // }
 
-    const uploadPromises = images.map((image) => {
-      return new Promise((resolve, reject) => {
-        if (!image.buffer || image.buffer.length === 0) {
-          return reject(new Error("Invalid image buffer."));
-        }
+    // const uploadPromises = images.map((image) => {
+    //   return new Promise((resolve, reject) => {
+    //     if (!image.buffer || image.buffer.length === 0) {
+    //       return reject(new Error("Invalid image buffer."));
+    //     }
 
-        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-        if (image.size > MAX_FILE_SIZE) {
-          return reject(new Error("File size exceeds the 10MB limit."));
-        }
+    //     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    //     if (image.size > MAX_FILE_SIZE) {
+    //       return reject(new Error("File size exceeds the 10MB limit."));
+    //     }
 
-        // Upload to Cloudinary
-        cloudinary.uploader
-          .upload_stream({ folder: "bees" }, (error, result) => {
-            if (error) {
-              console.error("Cloudinary upload error:", error);
-              return reject(new Error("Error uploading image to Cloudinary."));
-            }
-            resolve({ src: result.secure_url }); // Return the image URL
-          })
-          .end(image.buffer);
-      });
-    });
+    //     // Upload to Cloudinary
+    //     cloudinary.uploader
+    //       .upload_stream({ folder: "bees" }, (error, result) => {
+    //         if (error) {
+    //           console.error("Cloudinary upload error:", error);
+    //           return reject(new Error("Error uploading image to Cloudinary."));
+    //         }
+    //         resolve({ src: result.secure_url }); // Return the image URL
+    //       })
+    //       .end(image.buffer);
+    //   });
+    // });
 
-    const uploadedImages = await Promise.all(uploadPromises);
+    // const uploadedImages = await Promise.all(uploadPromises);
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -85,7 +85,6 @@ export const Register = async (req, res) => {
       email,
       phoneNumber,
       password: hashedPassword,
-      image: uploadedImages[0].src,
     });
 
     let referrer = null;
@@ -120,7 +119,6 @@ export const Register = async (req, res) => {
         email: newUser.email,
         cpf: newUser.cpf,
         phoneNumber: newUser.phoneNumber,
-        image: newUser.image,
         referralCode: newUser.referralCode,
       },
     });
@@ -133,7 +131,6 @@ export const Register = async (req, res) => {
     });
   }
 };
-
 
 function generateOTP() {
   const otp = Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
