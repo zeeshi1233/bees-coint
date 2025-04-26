@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
     },
     lastName: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
     },
     email: {
@@ -60,8 +60,7 @@ const userSchema = new mongoose.Schema(
       default: 0,
     },
     referralCode: {
-      type: String,
-      unique: true,  // Ensure each user has a unique referral code
+      type: String,   
     },
     referredBy: {
       type: mongoose.Schema.Types.ObjectId,

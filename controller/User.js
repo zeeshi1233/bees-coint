@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 import RefferalSchema from "../model/RefferalSchema.js";
 const userValidationSchema = Joi.object({
   firstName: Joi.string().required().trim(),
-  lastName: Joi.string().required().trim(),
+  // lastName: Joi.string().required().trim(),
   cpf: Joi.string()
     .length(11)
     .pattern(/^[0-9]{11}$/)
