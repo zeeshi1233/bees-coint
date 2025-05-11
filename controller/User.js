@@ -492,6 +492,32 @@ export const getProfile = async (req, res) => {
     });
   }
 };
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find(); // Returns an array
+    console.log(users, "userss");
+
+    const usersWithoutPasswords = users.map((user) => {
+      const { password, ...userWithoutPassword } = user.toObject();
+      return userWithoutPassword;
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Users fetched successfully",
+      data: usersWithoutPasswords,
+    });
+
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching user profile",
+      error: error.message,
+    });
+  }
+};
+
 
 
 export const getReferrals = async (req, res) => {
@@ -500,5 +526,41 @@ export const getReferrals = async (req, res) => {
     res.json(referrals);
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+export const toggleUserBlock = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Toggle the isVerified flag
+    user.isVerified = !user.isVerified;
+    await user.save();
+
+    const action = user.isVerified ? "unblocked and verified" : "blocked and unverified";
+
+    return res.status(200).json({
+      success: true,
+      message: `User has been ${action}`,
+      data: {
+        email: user.email,
+        isVerified: user.isVerified,
+      },
+    });
+  } catch (error) {
+    console.error("Error toggling user block:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };

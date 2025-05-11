@@ -8,7 +8,7 @@ const InvesmentPackagerouter = express.Router();
 InvesmentPackagerouter.post('/create-pacakge',protect, createInvestmentPackage);
 
 // Admin Route to Get All Active Investment Packages
-InvesmentPackagerouter.get('/get-pacakge',protect, getAllPackages);
+InvesmentPackagerouter.get('/get-pacakge',protect,getAllPackages);
 
 // Admin Route to Update an Existing Investment Package
 InvesmentPackagerouter.put('/update-package/:id',protect, updateInvestmentPackage);

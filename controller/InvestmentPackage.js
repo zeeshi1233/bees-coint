@@ -2,7 +2,7 @@ import { InvestmentPackage } from "../model/InvestmentSchema.js";
 
 // Create a new investment package
 export const createInvestmentPackage = async (req, res) => {
-  const { name, description, minAmount, maxAmount, dailyReturnPercentage, durationInDays } = req.body;
+  const { name, description, minAmount, maxAmount, dailyReturnPercentage, durationInDays,price } = req.body;
 
   try {
     const newPackage = new InvestmentPackage({
@@ -12,6 +12,7 @@ export const createInvestmentPackage = async (req, res) => {
       maxAmount,
       dailyReturnPercentage,
       durationInDays,
+      price
     });
 
     await newPackage.save();
