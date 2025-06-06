@@ -138,6 +138,105 @@ export const Register = async (req, res) => {
   }
 };
 
+export const googleLogin = async (req, res) => {
+  const { idToken } = req.body;
+
+  if (!idToken) {
+    return res.status(400).json({ success: false, message: "No token provided" });
+  }
+
+  try {
+    // Verify token with Google
+    const googleUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`;
+    const response = await axios.get(googleUrl);
+
+    const { email, given_name, family_name } = response.data;
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Google token invalid" });
+    }
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create user
+      user = new User({
+        email,
+        firstName: given_name,
+        lastName: family_name,
+        password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10), // placeholder password
+        cpf: generateRandomCpf(), // use your existing CPF generator
+      });
+
+      await user.save();
+    }
+
+    // Return success
+    return res.status(200).json({
+      success: true,
+      message: "Google login successful",
+      data: {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        cpf: user.cpf,
+      },
+    });
+  } catch (error) {
+    console.error("Google login error:", error);
+    return res.status(500).json({ success: false, message: "Google login failed" });
+  }
+};
+
+export const facebookLogin = async (req, res) => {
+  const { accessToken, userID } = req.body;
+
+  if (!accessToken || !userID) {
+    return res.status(400).json({ success: false, message: "Missing Facebook credentials" });
+  }
+
+  try {
+    const fbUrl = `https://graph.facebook.com/${userID}?fields=id,name,email,first_name,last_name&access_token=${accessToken}`;
+    const response = await axios.get(fbUrl);
+
+    const { email, first_name, last_name } = response.data;
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email not found in Facebook response" });
+    }
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = new User({
+        email,
+        firstName: first_name,
+        lastName: last_name,
+        password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10),
+        cpf: generateRandomCpf(),
+      });
+
+      await user.save();
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Facebook login successful",
+      data: {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        cpf: user.cpf,
+      },
+    });
+  } catch (error) {
+    console.error("Facebook login error:", error);
+    return res.status(500).json({ success: false, message: "Facebook login failed" });
+  }
+};
+
 function generateOTP() {
   const otp = Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
   return otp.toString();
