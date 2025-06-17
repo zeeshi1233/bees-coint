@@ -28,16 +28,16 @@ const userSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: String,
-      required: true,
+      required: false,
       match: /^\+?(\d{1,3})?(\d{10})$/, // Simple regex to match a valid phone number
     },    
     zipCode: {
       type: String,
-      required: true,
+      required: false,
     },    
     dob: {
       type: String,
-      required: true,
+      required: false,
     },    
     password: {
       type: String,

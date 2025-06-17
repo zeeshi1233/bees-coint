@@ -6,6 +6,7 @@ import sendEmail from "../utils/sendMails.js";
 import Otp from "../model/OtpSchema.js";
 import jwt from "jsonwebtoken";
 import RefferalSchema from "../model/RefferalSchema.js";
+import axios from "axios";
 const userValidationSchema = Joi.object({
   firstName: Joi.string().required().trim(),
   // lastName: Joi.string().required().trim(),
@@ -158,7 +159,10 @@ export const googleLogin = async (req, res) => {
 
     // Check if user exists
     let user = await User.findOne({ email });
-
+ const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET_KEY // Secret key for JWT token
+    );
     if (!user) {
       // Create user
       user = new User({
@@ -176,12 +180,13 @@ export const googleLogin = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Google login successful",
-      data: {
+      user: {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
         cpf: user.cpf,
       },
+      token:token
     });
   } catch (error) {
     console.error("Google login error:", error);
@@ -208,7 +213,10 @@ export const facebookLogin = async (req, res) => {
 
     // Check if user exists
     let user = await User.findOne({ email });
-
+ const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET_KEY // Secret key for JWT token
+    );
     if (!user) {
       user = new User({
         email,
@@ -224,12 +232,13 @@ export const facebookLogin = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Facebook login successful",
-      data: {
+      user: {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
         cpf: user.cpf,
       },
+      token:token
     });
   } catch (error) {
     console.error("Facebook login error:", error);
